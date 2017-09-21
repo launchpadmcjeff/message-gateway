@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="id" value='#{smsMessageBean.id}'/>
+		<f:event type="preRenderView" listener='#{smsMessageBean.retrieve}'/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="View Sms Message"/>
+
+	<ui:define name="header">
+		Sms Message
+	</ui:define>
+
+	<ui:define name="subheader">
+		View existing Sms Message
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:panelGrid columnClasses="label,component,required" columns="3">
+			<h:outputLabel for="smsMessageBeanSmsMessageToPhoneCountryCode" value="To Phone Country Code:"/>
+			<h:outputText id="smsMessageBeanSmsMessageToPhoneCountryCode" value="#{smsMessageBean.smsMessage.toPhoneCountryCode}"/>
+			<h:outputText/>
+			<h:outputLabel for="smsMessageBeanSmsMessageToPhoneAreaCode" value="To Phone Area Code:"/>
+			<h:outputText id="smsMessageBeanSmsMessageToPhoneAreaCode" value="#{smsMessageBean.smsMessage.toPhoneAreaCode}"/>
+			<h:outputText/>
+			<h:outputLabel for="smsMessageBeanSmsMessageToPhonePrefix" value="To Phone Prefix:"/>
+			<h:outputText id="smsMessageBeanSmsMessageToPhonePrefix" value="#{smsMessageBean.smsMessage.toPhonePrefix}"/>
+			<h:outputText/>
+			<h:outputLabel for="smsMessageBeanSmsMessageToPhoneLine" value="To Phone Line:"/>
+			<h:outputText id="smsMessageBeanSmsMessageToPhoneLine" value="#{smsMessageBean.smsMessage.toPhoneLine}"/>
+			<h:outputText/>
+		</h:panelGrid>
+
+		<div class="buttons">
+			<h:link value="View All" outcome="search" styleClass="btn btn-primary"/> 
+			<h:link value="Edit" outcome="create" includeViewParams="true" styleClass="btn btn-primary"/>
+			<h:link value="Create New" outcome="create" styleClass="btn btn-primary"/>
+		</div>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="page" value='#{emailMessageBean.page}'/>
+		<f:event type="preRenderView" listener='#{emailMessageBean.paginate}'/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="Search Email Message entities"/>
+
+	<ui:define name="header">
+		Email Message
+	</ui:define>
+
+	<ui:define name="subheader">
+		Search Email Message entities
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:form id="search">
+			<f:validateBean disabled="true">
+				<h:panelGroup styleClass="search">
+
+					<h:panelGrid columnClasses="label,component,required" columns="3">
+						<h:outputLabel for="emailMessageBeanExampleToEmailAddress" value="To Email Address:"/>
+						<h:panelGroup>
+							<h:inputText id="emailMessageBeanExampleToEmailAddress" value="#{emailMessageBean.example.toEmailAddress}"/>
+							<h:message for="emailMessageBeanExampleToEmailAddress" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="emailMessageBeanExampleFromEmailAddress" value="From Email Address:"/>
+						<h:panelGroup>
+							<h:inputText id="emailMessageBeanExampleFromEmailAddress" value="#{emailMessageBean.example.fromEmailAddress}"/>
+							<h:message for="emailMessageBeanExampleFromEmailAddress" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+					</h:panelGrid>
+					<h:panelGroup styleClass="buttons">
+						<h:commandLink value="Search" action='#{emailMessageBean.search}' styleClass="btn btn-primary"/>
+						<h:commandLink value="Create New" action='#{emailMessageBean.create}' styleClass="btn btn-primary"/>
+					</h:panelGroup>
+				</h:panelGroup>
+			</f:validateBean>
+			
+			<h:dataTable id="emailMessageBeanPageItems" styleClass="data-table" value="#{emailMessageBean.pageItems}" var="_item">
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="To Email Address"/>
+					</f:facet>
+					<h:link outcome="/emailMessage/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="_itemToEmailAddress" value="#{_item.toEmailAddress}"/>
+					</h:link>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="From Email Address"/>
+					</f:facet>
+					<h:link outcome="/emailMessage/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="_itemFromEmailAddress" value="#{_item.fromEmailAddress}"/>
+					</h:link>
+				</h:column>
+			</h:dataTable>
+			<ui:include src="/resources/scaffold/paginator.xhtml">
+				<ui:param name="paginatorBean" value='#{emailMessageBean}'/>
+			</ui:include>
+		</h:form>
+			
+	</ui:define>
+
+</ui:composition>
