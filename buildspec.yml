@@ -17,4 +17,4 @@ phases:
 artifacts:
   files:
     - message-m2m/target/message-m2m-0.0.1-SNAPSHOT.jar
-    - message-ui/target/messsage-ui.war
+    - message-ui/target/message-ui.war
