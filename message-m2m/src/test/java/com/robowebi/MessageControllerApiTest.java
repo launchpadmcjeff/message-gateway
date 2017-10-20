@@ -1,5 +1,6 @@
 package com.robowebi;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -11,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,11 +28,21 @@ public class MessageControllerApiTest {
 	private MockMvc mockMvc;
 	
 	@MockBean
-	SmsProcessor smsProcessor;
+	SmsService smsService;
 	
+	@MockBean
+	TwitterService twitterService;
+	
+
+    @Before
+    public void setup() {
+//        given(this.owners.findById(TEST_OWNER_ID)).willReturn(george);
+    	
+    }
+    
 	@Test
 	public void shouldReturnDefaultMessage() throws Exception {
 		this.mockMvc.perform(get("/sms")).andDo(print()).andExpect(status().isOk())
-				.andExpect(content().string(containsString("hi"))).andDo(document("smsHi"));
+				.andExpect(content().string(containsString("sms"))).andDo(document("smsHi"));
 	}
 }

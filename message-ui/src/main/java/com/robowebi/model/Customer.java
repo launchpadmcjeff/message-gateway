@@ -96,13 +96,7 @@ public class Customer implements Serializable {
 
 	@Override
 	public String toString() {
-		String result = getClass().getSimpleName() + " ";
-		if (firstName != null && !firstName.trim().isEmpty())
-			result += "firstName: " + firstName;
-		if (middleName != null && !middleName.trim().isEmpty())
-			result += ", middleName: " + middleName;
-		if (lastName != null && !lastName.trim().isEmpty())
-			result += ", lastName: " + lastName;
-		return result;
+		return "Customer::[id=" + id + ", version=" + version + ", firstName=" + firstName + ", middleName="
+				+ middleName + ", lastName=" + lastName + "]";
 	}
 }

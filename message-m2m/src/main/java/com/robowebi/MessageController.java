@@ -12,28 +12,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MessageController {
-	@Autowired
-	SmsProcessor smsProcessor;
 	private final AtomicLong counter = new AtomicLong();
+	@Autowired
+	SmsService smsProcessor;
+	@Autowired
+	TwitterService twitterService;
 
 	@RequestMapping("/customers")
 	public ResponseEntity<String> customers(@RequestParam MultiValueMap<String, String> requestParams) {
 		counter.getAndIncrement();
-		final ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>("customers", HttpStatus.OK);
 		return responseEntity;
 	}
 
 	@RequestMapping("/email")
 	public ResponseEntity<String> emailMessages(@RequestParam MultiValueMap<String, String> requestParams) {
 		counter.getAndIncrement();
-		final ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>("email", HttpStatus.OK);
 		return responseEntity;
 	}
 
 	@RequestMapping("/messages")
 	public ResponseEntity<String> plainMessages(@RequestParam MultiValueMap<String, String> requestParams) {
 		counter.getAndIncrement();
-		final ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>("messages", HttpStatus.OK);
 		return responseEntity;
 	}
 
@@ -41,7 +43,23 @@ public class MessageController {
 	public ResponseEntity<String> smsMessages(@RequestParam MultiValueMap<String, String> requestParams) {
 		counter.getAndIncrement();
 		smsProcessor.newMessage("hi");
-		final ResponseEntity<String> responseEntity = new ResponseEntity<>("hi", HttpStatus.OK);
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>("sms", HttpStatus.OK);
+		return responseEntity;
+	}
+
+	@RequestMapping("/twitter")
+	public ResponseEntity<String> twitterMessages(@RequestParam MultiValueMap<String, String> requestParams) {
+		counter.getAndIncrement();
+		twitterService.tweet();
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>("twitter", HttpStatus.OK);
+		return responseEntity;
+	}
+
+	@RequestMapping("/facebook")
+	public ResponseEntity<String> facebookMessages(@RequestParam MultiValueMap<String, String> requestParams) {
+		counter.getAndIncrement();
+		smsProcessor.newMessage("hi");
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>("facebook", HttpStatus.OK);
 		return responseEntity;
 	}
 }
