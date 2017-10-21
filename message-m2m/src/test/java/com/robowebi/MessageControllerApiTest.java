@@ -13,11 +13,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(MessageController.class)
@@ -45,4 +47,13 @@ public class MessageControllerApiTest {
 		this.mockMvc.perform(get("/sms")).andDo(print()).andExpect(status().isOk())
 				.andExpect(content().string(containsString("sms"))).andDo(document("smsHi"));
 	}
+	
+//	@Test
+//	public void plainMessagesShouldWork() throws Exception {
+//		this.mockMvc.perform(get("/messages")).andDo(print()).andExpect(status().isOk())
+//		.andExpect(content().string(containsString("messages"))).andDo(document("messages",
+//				pathParameters(
+//						parameterWithName("meta")
+//						)));
+//	}
 }

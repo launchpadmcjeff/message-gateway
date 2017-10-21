@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,8 +33,10 @@ public class MessageController {
 		return responseEntity;
 	}
 
-	@RequestMapping("/messages")
-	public ResponseEntity<String> plainMessages(@RequestParam MultiValueMap<String, String> requestParams) {
+	@RequestMapping("/messages/{meta}/{index}")
+	public ResponseEntity<String> plainMessages(@RequestParam MultiValueMap<String, String> requestParams,
+			@PathVariable(name = "meta", required = false) String meta,
+			@PathVariable(name = "index", required = false) String index) {
 		counter.getAndIncrement();
 		final ResponseEntity<String> responseEntity = new ResponseEntity<>("messages", HttpStatus.OK);
 		return responseEntity;
@@ -60,6 +63,13 @@ public class MessageController {
 		counter.getAndIncrement();
 		smsProcessor.newMessage("hi");
 		final ResponseEntity<String> responseEntity = new ResponseEntity<>("facebook", HttpStatus.OK);
+		return responseEntity;
+	}
+
+	@RequestMapping("/youtube")
+	public ResponseEntity<String> youtube(@RequestParam MultiValueMap<String, String> requestParams) {
+		counter.getAndIncrement();
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>("youtube", HttpStatus.OK);
 		return responseEntity;
 	}
 }
