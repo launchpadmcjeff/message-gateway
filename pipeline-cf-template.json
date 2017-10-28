@@ -1,0 +1,119 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "ProjectName": {
+            "Description": "The CodeBuild project name to build.",
+            "Type": "String",
+            "Default": "message-gateway",
+            "AllowedPattern": "[\\x20-\\x7E]*",
+            "ConstraintDescription": "Can contain only ASCII characters."
+        },
+        "ArtifactStoreS3Location": {
+            "Description": "The Amazon S3 bucket used for storing the artifacts for a pipeline",
+            "Type": "String",
+            "Default": "codepipeline-us-west-2-435776636860",
+            "AllowedPattern": "[a-zA-Z0-9\\-\\.]+",
+            "ConstraintDescription": "Can contain only ASCII characters."
+        },
+        "CodePipelineServiceRole": {
+            "Description": "A service role ARN that grants AWS CodePipeline permission to make calls to AWS services on your behalf.",
+            "Type": "String",
+            "Default": "arn:aws:iam::737930803050:role/AWS-CodePipeline-Service",
+            "AllowedPattern": "[\\x20-\\x7E]*",
+            "ConstraintDescription": "Can contain only ASCII characters."
+        },
+        "GitBranch": {
+            "Description": "Git branch to use for builds.",
+            "Type": "String",
+            "Default": "master",
+            "AllowedPattern": "[\\x20-\\x7E]*",
+            "ConstraintDescription": "Can contain only ASCII characters."
+        },
+        "RepositoryName": {
+            "Description": "The Git repository to use for builds.",
+            "Type": "String",
+            "Default": "message-gateway",
+            "AllowedPattern": "[\\x20-\\x7E]*",
+            "ConstraintDescription": "Can contain only ASCII characters."
+        },
+        "PipelineName": {
+            "Description": "The name for the new AWS CloudPipeline.",
+            "Type": "String",
+            "Default": "message-gateway-pipe",
+            "AllowedPattern": "[\\x20-\\x7E]*",
+            "ConstraintDescription": "Can contain only ASCII characters."
+        }
+    },
+    "Resources": {
+        "MessageGatewayPipeline": {
+            "Type": "AWS::CodePipeline::Pipeline",
+            "Properties": {
+                "ArtifactStore": {
+                    "Type": "S3",
+                    "Location": {
+                        "Ref": "ArtifactStoreS3Location"
+                    }
+                },
+                "Name": { "Ref": "PipelineName"},
+                "RestartExecutionOnUpdate": false,
+                "RoleArn": {
+                    "Ref": "CodePipelineServiceRole"
+                },
+                "Stages": [
+                    {
+                        "Name": "Source",
+                        "Actions": [
+                            {
+                                "Name": "SourceAction",
+                                "ActionTypeId": {
+                                    "Category": "Source",
+                                    "Owner": "AWS",
+                                    "Version": "1",
+                                    "Provider": "CodeCommit"
+                                },
+                                "Configuration": {
+                                    "BranchName": {
+                                        "Ref": "GitBranch"
+                                    },
+                                    "RepositoryName": { "Ref": "RepositoryName"},
+                                    "PollForSourceChanges": "true"
+                                },
+                                "OutputArtifacts": [
+                                    {
+                                        "Name": "SourceOutput"
+                                    }
+                                ],
+                                "RunOrder": 1
+                            }
+                        ]
+                    },
+                    {
+                        "Name": "Build",
+                        "Actions": [
+                            {
+                                "Name": "BuildAction",
+                                "InputArtifacts": [
+                                    {
+                                        "Name": "SourceOutput"
+                                    }
+                                ],
+                                "ActionTypeId": {
+                                    "Category": "Build",
+                                    "Owner": "AWS",
+                                    "Version": "1",
+                                    "Provider": "CodeBuild"
+                                },
+                                "Configuration": {
+                                    "ProjectName": {
+                                        "Ref": "ProjectName"
+                                    }
+                                },
+                                "RunOrder": 1
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
