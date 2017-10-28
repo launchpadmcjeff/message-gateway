@@ -1,34 +1,57 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Metadata": {
-        "AWS::CloudFormation::Designer": {
-            "ee615bce-539d-4eb2-8b89-24dabfd62937": {
-                "size": {
-                    "width": 60,
-                    "height": 60
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [
+                {
+                    "Label": {
+                        "default": "CodePipeline Settings"
+                    },
+                    "Parameters": [
+                        "PipelineName",
+                        "S3Bucket",
+                        "SourceS3Key",
+                        "Email"
+                    ]
                 },
-                "position": {
-                    "x": 320,
-                    "y": 90
+                {
+                    "Label": {
+                        "default": "Test Stack Settings"
+                    },
+                    "Parameters": [
+                        "TestStackName",
+                        "TemplateFileName",
+                        "TestStackConfig"
+                    ]
                 },
-                "z": 1,
-                "embeds": [],
-                "isassociatedwith": [
-                    "e20c266d-00d4-4ad5-a5bb-62c6f0010f4d"
-                ]
-            },
-            "e20c266d-00d4-4ad5-a5bb-62c6f0010f4d": {
-                "size": {
-                    "width": 60,
-                    "height": 60
-                },
-                "position": {
-                    "x": 60,
-                    "y": 90
-                },
-                "z": 1,
-                "embeds": []
-            }
+                {
+                    "Label": {
+                        "default": "Production Stack Settings"
+                    },
+                    "Parameters": [
+                        "ChangeSetName",
+                        "ProdStackName",
+                        "ProdStackConfig"
+                    ]
+                }
+            ]
+        }
+    },
+    "Parameters": {
+        "TemplateFileName": {
+            "Default": "wordpress-single-instance.yaml",
+            "Description": "The file name of the WordPress template",
+            "Type": "String"
+        },
+        "TestStackName": {
+            "Default": "Test-MyWordPressSite",
+            "Description": "A name for the test WordPress stack",
+            "Type": "String"
+        },
+        "TestStackConfig": {
+            "Default": "test-stack-configuration.json",
+            "Description": "The configuration file name for the test WordPress stack",
+            "Type": "String"
         }
     },
     "Resources": {

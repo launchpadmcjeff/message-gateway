@@ -42,6 +42,21 @@
             "Default": "message-gateway-pipe",
             "AllowedPattern": "[\\x20-\\x7E]*",
             "ConstraintDescription": "Can contain only ASCII characters."
+        },
+        "TemplateFileName": {
+            "Default": "wordpress-single-instance.yaml",
+            "Description": "The file name of the WordPress template",
+            "Type": "String"
+        },
+        "TestStackName": {
+            "Default": "Test-MG",
+            "Description": "A name for the test WordPress stack",
+            "Type": "String"
+        },
+        "TestStackConfig": {
+            "Default": "test-stack-configuration.json",
+            "Description": "The configuration file name for the test WordPress stack",
+            "Type": "String"
         }
     },
     "Resources": {
@@ -54,7 +69,9 @@
                         "Ref": "ArtifactStoreS3Location"
                     }
                 },
-                "Name": { "Ref": "PipelineName"},
+                "Name": {
+                    "Ref": "PipelineName"
+                },
                 "RestartExecutionOnUpdate": false,
                 "RoleArn": {
                     "Ref": "CodePipelineServiceRole"
@@ -75,7 +92,9 @@
                                     "BranchName": {
                                         "Ref": "GitBranch"
                                     },
-                                    "RepositoryName": { "Ref": "RepositoryName"},
+                                    "RepositoryName": {
+                                        "Ref": "RepositoryName"
+                                    },
                                     "PollForSourceChanges": "true"
                                 },
                                 "OutputArtifacts": [
@@ -108,9 +127,141 @@
                                         "Ref": "ProjectName"
                                     }
                                 },
+                                "OutputArtifacts": [
+                                    {
+                                        "Name": "TemplateSource"
+                                    }
+                                ],
                                 "RunOrder": 1
                             }
                         ]
+                    },
+                    {
+                        "Name": "TestStage",
+                        "Actions": [
+                            {
+                                "Name": "CreateStack",
+                                "ActionTypeId": {
+                                    "Category": "Deploy",
+                                    "Owner": "AWS",
+                                    "Provider": "CloudFormation",
+                                    "Version": "1"
+                                },
+                                "InputArtifacts": [
+                                    {
+                                        "Name": "TemplateSource"
+                                    }
+                                ],
+                                "Configuration": {
+                                    "ActionMode": "REPLACE_ON_FAILURE",
+                                    "RoleArn": {
+                                        "Fn::GetAtt": [
+                                            "CFNRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    "StackName": {
+                                        "Ref": "TestStackName"
+                                    },
+                                    "TemplateConfiguration": {
+                                        "Fn::Sub": "TemplateSource::${TestStackConfig}"
+                                    },
+                                    "TemplatePath": {
+                                        "Fn::Sub": "TemplateSource::${TemplateFileName}"
+                                    }
+                                },
+                                "RunOrder": "1"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "CFNRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "cloudformation.amazonaws.com"
+                                ]
+                            }
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "CloudFormationRole",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "ec2:*"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": "*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "PipelineRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "codepipeline.amazonaws.com"
+                                ]
+                            }
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "CodePipelineAccess",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:*",
+                                        "cloudformation:CreateStack",
+                                        "cloudformation:DescribeStacks",
+                                        "cloudformation:DeleteStack",
+                                        "cloudformation:UpdateStack",
+                                        "cloudformation:CreateChangeSet",
+                                        "cloudformation:ExecuteChangeSet",
+                                        "cloudformation:DeleteChangeSet",
+                                        "cloudformation:DescribeChangeSet",
+                                        "cloudformation:SetStackPolicy",
+                                        "iam:PassRole",
+                                        "sns:Publish"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": "*"
+                                }
+                            ]
+                        }
                     }
                 ]
             }
