@@ -43,8 +43,8 @@
             "AllowedPattern": "[\\x20-\\x7E]*",
             "ConstraintDescription": "Can contain only ASCII characters."
         },
-        "TemplateFileName": {
-            "Default": "wordpress-single-instance.yaml",
+        "TestTemplateFileName": {
+            "Default": "test-single-instance-template.yaml",
             "Description": "The file name of the MG template",
             "Type": "String"
         },
@@ -58,7 +58,12 @@
             "Description": "The configuration file name for the test MG stack",
             "Type": "String"
         },
-         "ProdStackName": {
+        "ProdTemplateFileName": {
+            "Default": "prod-stack-blue-green-template.json",
+            "Description": "The file name of the MG template",
+            "Type": "String"
+        },
+        "ProdStackName": {
             "Default": "Prod-MG",
             "Description": "A name for the production MG stack",
             "Type": "String"
@@ -194,7 +199,7 @@
                                         "Fn::Sub": "SourceOutput::${TestStackConfig}"
                                     },
                                     "TemplatePath": {
-                                        "Fn::Sub": "SourceOutput::${TemplateFileName}"
+                                        "Fn::Sub": "SourceOutput::${TestTemplateFileName}"
                                     }
                                 },
                                 "RunOrder": "1"
@@ -275,7 +280,7 @@
                                         "Fn::Sub": "SourceOutput::${ProdStackConfig}"
                                     },
                                     "TemplatePath": {
-                                        "Fn::Sub": "SourceOutput::${TemplateFileName}"
+                                        "Fn::Sub": "SourceOutput::${ProdTemplateFileName}"
                                     }
                                 },
                                 "RunOrder": "1"

@@ -4,6 +4,7 @@
     "DBPassword" : "ProdDBPassword",
     "DBRootPassword" : "ProdDBRootPassword",
     "DBUser" : "ProdDBuser",    
-    "KeyName" : "aws"
+    "KeyPairName" : "aws",
+    "InstanceCount" : "3"
   }
 }
