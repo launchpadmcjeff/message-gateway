@@ -35,6 +35,7 @@
         "VpcId": {
           "Ref": "VPC"
         },
+        "AvailabilityZone": "us-west-2a",
         "CidrBlock": "10.0.0.0/24",
         "MapPublicIpOnLaunch": "true",
         "Tags": [
@@ -53,6 +54,7 @@
         "VpcId": {
           "Ref": "VPC"
         },
+        "AvailabilityZone": "us-west-2b",
         "CidrBlock": "10.0.1.0/24",
         "MapPublicIpOnLaunch": "true",
         "Tags": [
@@ -71,6 +73,7 @@
         "VpcId": {
           "Ref": "VPC"
         },
+        "AvailabilityZone": "us-west-2c",
         "CidrBlock": "10.0.2.0/24",
         "MapPublicIpOnLaunch": "true",
         "Tags": [
@@ -89,6 +92,7 @@
         "VpcId": {
           "Ref": "VPC"
         },
+        "AvailabilityZone": "us-west-2a",
         "CidrBlock": "10.0.3.0/24",
         "MapPublicIpOnLaunch": "true",
         "Tags": [
