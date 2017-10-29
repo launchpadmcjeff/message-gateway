@@ -45,21 +45,53 @@
         },
         "TemplateFileName": {
             "Default": "wordpress-single-instance.yaml",
-            "Description": "The file name of the WordPress template",
+            "Description": "The file name of the MG template",
             "Type": "String"
         },
         "TestStackName": {
             "Default": "Test-MG",
-            "Description": "A name for the test WordPress stack",
+            "Description": "A name for the test MG stack",
             "Type": "String"
         },
         "TestStackConfig": {
             "Default": "test-stack-configuration.json",
-            "Description": "The configuration file name for the test WordPress stack",
+            "Description": "The configuration file name for the test MG stack",
+            "Type": "String"
+        },
+         "ProdStackName": {
+            "Default": "Prod-MG",
+            "Description": "A name for the production MG stack",
+            "Type": "String"
+        },
+        "ProdStackConfig": {
+            "Default": "prod-stack-configuration.json",
+            "Description": "The configuration file name for the production MG stack",
+            "Type": "String"
+        },
+        "ChangeSetName": {
+            "Default": "UpdatePreview-MG",
+            "Description": "A name for the production MG stack change set",
+            "Type": "String"
+        },
+        "Email": {
+            "Description": "The email address where CodePipeline sends pipeline notifications",
             "Type": "String"
         }
     },
     "Resources": {
+        "CodePipelineSNSTopic": {
+            "Type": "AWS::SNS::Topic",
+            "Properties": {
+                "Subscription": [
+                    {
+                        "Endpoint": {
+                            "Ref": "Email"
+                        },
+                        "Protocol": "email"
+                    }
+                ]
+            }
+        },
         "MessageGatewayPipeline": {
             "Type": "AWS::CodePipeline::Pipeline",
             "Properties": {
@@ -127,11 +159,6 @@
                                         "Ref": "ProjectName"
                                     }
                                 },
-                                "OutputArtifacts": [
-                                    {
-                                        "Name": "TemplateSource"
-                                    }
-                                ],
                                 "RunOrder": 1
                             }
                         ]
@@ -149,7 +176,7 @@
                                 },
                                 "InputArtifacts": [
                                     {
-                                        "Name": "TemplateSource"
+                                        "Name": "SourceOutput"
                                     }
                                 ],
                                 "Configuration": {
@@ -164,13 +191,137 @@
                                         "Ref": "TestStackName"
                                     },
                                     "TemplateConfiguration": {
-                                        "Fn::Sub": "TemplateSource::${TestStackConfig}"
+                                        "Fn::Sub": "SourceOutput::${TestStackConfig}"
                                     },
                                     "TemplatePath": {
-                                        "Fn::Sub": "TemplateSource::${TemplateFileName}"
+                                        "Fn::Sub": "SourceOutput::${TemplateFileName}"
                                     }
                                 },
                                 "RunOrder": "1"
+                            },
+                            {
+                                "Name": "ApproveTestStack",
+                                "ActionTypeId": {
+                                    "Category": "Approval",
+                                    "Owner": "AWS",
+                                    "Provider": "Manual",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "NotificationArn": {
+                                        "Ref": "CodePipelineSNSTopic"
+                                    },
+                                    "CustomData": {
+                                        "Fn::Sub": "Do you want to create a change set against the production stack and delete the ${TestStackName} stack?"
+                                    }
+                                },
+                                "RunOrder": "2"
+                            },
+                            {
+                                "Name": "DeleteTestStack",
+                                "ActionTypeId": {
+                                    "Category": "Deploy",
+                                    "Owner": "AWS",
+                                    "Provider": "CloudFormation",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "ActionMode": "DELETE_ONLY",
+                                    "RoleArn": {
+                                        "Fn::GetAtt": [
+                                            "CFNRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    "StackName": {
+                                        "Ref": "TestStackName"
+                                    }
+                                },
+                                "RunOrder": "3"
+                            }
+                        ]
+                    },
+                    {
+                        "Name": "ProdStage",
+                        "Actions": [
+                            {
+                                "Name": "CreateChangeSet",
+                                "ActionTypeId": {
+                                    "Category": "Deploy",
+                                    "Owner": "AWS",
+                                    "Provider": "CloudFormation",
+                                    "Version": "1"
+                                },
+                                "InputArtifacts": [
+                                    {
+                                        "Name": "SourceOutput"
+                                    }
+                                ],
+                                "Configuration": {
+                                    "ActionMode": "CHANGE_SET_REPLACE",
+                                    "RoleArn": {
+                                        "Fn::GetAtt": [
+                                            "CFNRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    "StackName": {
+                                        "Ref": "ProdStackName"
+                                    },
+                                    "ChangeSetName": {
+                                        "Ref": "ChangeSetName"
+                                    },
+                                    "TemplateConfiguration": {
+                                        "Fn::Sub": "SourceOutput::${ProdStackConfig}"
+                                    },
+                                    "TemplatePath": {
+                                        "Fn::Sub": "SourceOutput::${TemplateFileName}"
+                                    }
+                                },
+                                "RunOrder": "1"
+                            },
+                            {
+                                "Name": "ApproveChangeSet",
+                                "ActionTypeId": {
+                                    "Category": "Approval",
+                                    "Owner": "AWS",
+                                    "Provider": "Manual",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "NotificationArn": {
+                                        "Ref": "CodePipelineSNSTopic"
+                                    },
+                                    "CustomData": {
+                                        "Fn::Sub": "A new change set was created for the ${ProdStackName} stack. Do you want to implement the changes?"
+                                    }
+                                },
+                                "RunOrder": "2"
+                            },
+                            {
+                                "Name": "ExecuteChangeSet",
+                                "ActionTypeId": {
+                                    "Category": "Deploy",
+                                    "Owner": "AWS",
+                                    "Provider": "CloudFormation",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "ActionMode": "CHANGE_SET_EXECUTE",
+                                    "ChangeSetName": {
+                                        "Ref": "ChangeSetName"
+                                    },
+                                    "RoleArn": {
+                                        "Fn::GetAtt": [
+                                            "CFNRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    "StackName": {
+                                        "Ref": "ProdStackName"
+                                    }
+                                },
+                                "RunOrder": "3"
                             }
                         ]
                     }
