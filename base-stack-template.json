@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": ".",
+  "Description": "The base stack. It exports VPN, subnets, security groups, and other shared resources.",
   "Parameters": {
     "SSHLocation": {
       "Description": "The IP address range that can be used to connect using SSH or RDP to the Amazon EC2 instances.",
@@ -16,8 +16,8 @@
     "VPC": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
-        "EnableDnsSupport": "true",
-        "EnableDnsHostnames": "true",
+        "EnableDnsSupport": true,
+        "EnableDnsHostnames": true,
         "CidrBlock": "10.0.0.0/16",
         "Tags": [
           {
@@ -258,10 +258,39 @@
         }
       }
     },
-    "WebServerSecurityGroup": {
+    "TestWebServerSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "GroupDescription": "Enable HTTP ingress",
+        "GroupDescription": "Enable HTTP ingress for test",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "8080",
+            "ToPort": "8080",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "9990",
+            "ToPort": "9990",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "ProdWebServerSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Enable HTTP ingress for prod",
         "VpcId": {
           "Ref": "VPC"
         },
@@ -351,17 +380,31 @@
         }
       }
     },
-    "WebServerSecurityGroup": {
-      "Description": "The security group ID to use for public web servers",
+    "TestWebServerSecurityGroup": {
+      "Description": "The security group ID to use for test web servers",
       "Value": {
         "Fn::GetAtt": [
-          "WebServerSecurityGroup",
+          "TestWebServerSecurityGroup",
           "GroupId"
         ]
       },
       "Export": {
         "Name": {
-          "Fn::Sub": "${AWS::StackName}-WebServerSecurityGroupID"
+          "Fn::Sub": "${AWS::StackName}-TestWebServerSecurityGroupID"
+        }
+      }
+    },
+    "ProdWebServerSecurityGroup": {
+      "Description": "The security group ID to use for prod web servers",
+      "Value": {
+        "Fn::GetAtt": [
+          "ProdWebServerSecurityGroup",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-ProdWebServerSecurityGroupID"
         }
       }
     },
