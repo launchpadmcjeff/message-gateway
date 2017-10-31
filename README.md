@@ -13,5 +13,5 @@ codepipeline
  -add name tag to instances
  -change instance type to t2.micro
  -change format to json from yaml
- 
+ -cross-region deployment pipeline 
 

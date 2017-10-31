@@ -6,6 +6,8 @@
     "DBUser" : "ProdDBuser",    
     "KeyPairName" : "aws",
     "InstanceCount" : "3",
-    "InstanceType": "t2.micro"
+    "InstanceType": "t2.micro",
+    "LoadBalancerName": "mgelb",
+    "ServiceRoleName": "mgsvccodedeploy"
   }
 }
