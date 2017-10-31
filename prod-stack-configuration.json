@@ -5,6 +5,7 @@
     "DBRootPassword" : "ProdDBRootPassword",
     "DBUser" : "ProdDBuser",    
     "KeyPairName" : "aws",
-    "InstanceCount" : "3"
+    "InstanceCount" : "3",
+    "InstanceType": "t2.micro"
   }
 }

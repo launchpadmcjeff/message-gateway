@@ -32,6 +32,18 @@
             "MinValue": "1",
             "MaxValue": "3"
         },
+        "InstanceType": {
+            "Description": "Number of Amazon EC2 instances in an autoscaling group.",
+            "Type": "String",
+            "Default": "t2.micro",
+            "AllowedValues": [
+                "t2.micro",
+                "t2.small",
+                "t2.medium",
+                "t2.large"
+            ],
+            "ConstraintDescription": "Must be a valid EC2 Instance type"
+        },
         "SSHLocation": {
             "Description": "The IP address range that can be used to connect using SSH or RDP to the Amazon EC2 instances.",
             "Type": "String",
@@ -299,12 +311,7 @@
                 },
                 "SecurityGroups": [
                     {
-                        "Fn::GetAtt": [
-                            {
-                                "Ref": "SecurityGroup"
-                            },
-                            "groupId"
-                        ]
+                        "Ref": "SecurityGroup"
                     }
                 ]
             }
@@ -324,7 +331,9 @@
                         "Linux"
                     ]
                 },
-                "InstanceType": "t2.micro",
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
                 "KeyName": {
                     "Ref": "KeyPairName"
                 },

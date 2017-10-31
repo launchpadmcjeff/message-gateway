@@ -4,6 +4,7 @@
     "DBPassword" : "TestDBRootPassword",
     "DBRootPassword" : "TestDBRootPassword",
     "DBUser" : "TestDBuser",    
-    "KeyName" : "aws"
+    "KeyName" : "aws",
+    "InstanceType": "t2.micro"
   }
 }
