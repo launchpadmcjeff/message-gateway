@@ -383,7 +383,8 @@
                                     "Action": [
                                         "ec2:*",
                                         "iam:*",
-                                        "elasticloadbalancing:*"
+                                        "elasticloadbalancing:*",
+                                        "autoscaling:*"
                                     ],
                                     "Effect": "Allow",
                                     "Resource": "*"
