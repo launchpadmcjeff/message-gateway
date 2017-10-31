@@ -288,6 +288,7 @@
                                             "Arn"
                                         ]
                                     },
+                                    "Capabilities": "CAPABILITY_NAMED_IAM",
                                     "StackName": {
                                         "Ref": "ProdStackName"
                                     },
@@ -428,7 +429,7 @@
                                         "cloudformation:DeleteChangeSet",
                                         "cloudformation:DescribeChangeSet",
                                         "cloudformation:SetStackPolicy",
-                                        "iam:PassRole",
+                                        "iam:*",
                                         "sns:Publish"
                                     ],
                                     "Effect": "Allow",
