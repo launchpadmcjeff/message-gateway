@@ -1,5 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "The CodePipeline Stack.  It builds the infrastructure to get to production.",
     "Parameters": {
         "ProjectName": {
             "Description": "The CodeBuild project name to build.",
@@ -380,7 +381,9 @@
                             "Statement": [
                                 {
                                     "Action": [
-                                        "ec2:*"
+                                        "ec2:*",
+                                        "iam:*",
+                                        "elasticloadbalancing:*"
                                     ],
                                     "Effect": "Allow",
                                     "Resource": "*"

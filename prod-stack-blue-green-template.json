@@ -311,7 +311,10 @@
                 },
                 "SecurityGroups": [
                     {
-                        "Ref": "SecurityGroup"
+                        "Fn::GetAtt": [
+                            "SecurityGroup",
+                            "GroupId"
+                        ]
                     }
                 ]
             }
