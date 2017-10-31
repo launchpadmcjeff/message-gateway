@@ -172,6 +172,24 @@
                         "Name": "TestStage",
                         "Actions": [
                             {
+                                "Name": "ApproveTestStack",
+                                "ActionTypeId": {
+                                    "Category": "Approval",
+                                    "Owner": "AWS",
+                                    "Provider": "Manual",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "NotificationArn": {
+                                        "Ref": "CodePipelineSNSTopic"
+                                    },
+                                    "CustomData": {
+                                        "Fn::Sub": "Do you want to create and test with ${TestStackName} stack?"
+                                    }
+                                },
+                                "RunOrder": "1"
+                            },
+                            {
                                 "Name": "CreateStack",
                                 "ActionTypeId": {
                                     "Category": "Deploy",
@@ -202,10 +220,10 @@
                                         "Fn::Sub": "SourceOutput::${TestTemplateFileName}"
                                     }
                                 },
-                                "RunOrder": "1"
+                                "RunOrder": "2"
                             },
                             {
-                                "Name": "ApproveTestStack",
+                                "Name": "ApproveDeleteTestStack",
                                 "ActionTypeId": {
                                     "Category": "Approval",
                                     "Owner": "AWS",
@@ -220,7 +238,7 @@
                                         "Fn::Sub": "Do you want to create a change set against the production stack and delete the ${TestStackName} stack?"
                                     }
                                 },
-                                "RunOrder": "2"
+                                "RunOrder": "3"
                             },
                             {
                                 "Name": "DeleteTestStack",
@@ -242,7 +260,7 @@
                                         "Ref": "TestStackName"
                                     }
                                 },
-                                "RunOrder": "3"
+                                "RunOrder": "4"
                             }
                         ]
                     },

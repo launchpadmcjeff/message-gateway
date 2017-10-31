@@ -1,9 +1,5 @@
 {
-  "Parameters" : {
-    "DBName" : "ProdWordPressDB",
-    "DBPassword" : "ProdDBPassword",
-    "DBRootPassword" : "ProdDBRootPassword",
-    "DBUser" : "ProdDBuser",    
+  "Parameters" : { 
     "KeyPairName" : "aws",
     "InstanceCount" : "3",
     "InstanceType": "t2.micro",
