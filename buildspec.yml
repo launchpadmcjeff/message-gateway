@@ -1,4 +1,8 @@
 version: 0.2
+env:
+  variables:
+    key: "value"
+    key: "value"
 
 phases:
   install:
@@ -18,3 +22,4 @@ artifacts:
   files:
     - message-m2m/target/message-m2m-0.0.1-SNAPSHOT.jar
     - message-ui/target/message-ui.war
+  discard-paths: yes
