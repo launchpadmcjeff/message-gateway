@@ -1,11 +1,31 @@
-= Getting Started With Spring REST Docs
+= Message API
+Jeff McKenzie;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks: 
 
-This is an example output for a service running at http://localhost:8080:
+[[introduction]]
+= Introduction
 
-.request
-include::{snippets}/smsHi/http-request.adoc[]
+The Message API provides access to SMS, social, and other outside communications.
 
-.response
-include::{snippets}/smsHi/http-response.adoc[]
+[[sms]]
+== SMS
 
-As you can see the format is very simple, and in fact you always get the same message.
+Send an sms from `/sms`
+
+operation::sms[]
+
+[[email]]
+== EMAIL
+
+Two path parameters are used to indicate the location
+
+
+[[messages]]
+== MESSAGES
+
+operation::messages[]

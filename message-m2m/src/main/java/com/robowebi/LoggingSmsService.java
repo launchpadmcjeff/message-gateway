@@ -11,8 +11,9 @@ public class LoggingSmsService implements SmsService {
 	private final Logger log = LoggerFactory.getLogger(LoggingSmsService.class);
 
 	@Override
-	public void newMessage(String message) {
-		log.info(message);
+	public String send(SmsMessage message) {
+		log.info(message.toString());
+		return "42";
 	}
 
 }
